@@ -54,7 +54,14 @@ app.use('/graphql', graphqlHttp({
     rootValue : {
         //when the incoming request requests this event property, this function gets executed
         events : () =>{
-            return events;
+            return Event.find()
+            .then(events =>{
+                return  events.map(event =>{
+                    return event
+                })
+            }).catch(err =>{
+                throw err;
+            })
         },
         createEvent : (args) =>{
             // const event = {
@@ -77,10 +84,10 @@ app.use('/graphql', graphqlHttp({
             .then( result =>{
                 console.log('hahah')
                 console.log(result);
-                return result;
+                return result
             })
             .catch(err => {
-                console.log(err);
+                throw err;
             });
         }
     },
