@@ -1,13 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
+const mongoose = require('mongoose');
+
 
 //generating a schema as a string
 const { buildSchema } = require('graphql');
 
+const Event = require('./models/event');
+
 const app = express();
 
-const events = [];
+//const events = [];
 
 app.use(bodyParser.json());
 
@@ -53,19 +57,41 @@ app.use('/graphql', graphqlHttp({
             return events;
         },
         createEvent : (args) =>{
-            const event = {
-                _id : Math.random().toString(),
+            // const event = {
+            //     _id : Math.random().toString(),
+            //     title : args.eventInput.title,
+            //     description : args.eventInput.description,
+            //     price : +args.eventInput.price,
+            //     date : args.eventInput.date
+            // };
+            // events.push(event);
+            // return(event);
+            const event = new Event ({
                 title : args.eventInput.title,
                 description : args.eventInput.description,
                 price : +args.eventInput.price,
-                date : args.eventInput.date
-            };
-            events.push(event);
-            return(event);
+                date : new Date(args.eventInput.date)
+            });
+            return event
+            event.save()
+            .then( result =>{
+                console.log('hahah')
+                console.log(result);
+                return result;
+            })
+            .catch(err => {
+                console.log(err);
+            });
         }
     },
     graphiql : true
 }));
 
+mongoose.connect('mongodb://127.0.0.1:27017');
 
-app.listen(3000);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+    app.listen(3000);
+    console.log('hahahah connected');
+});
