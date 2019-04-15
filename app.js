@@ -35,14 +35,13 @@ app.use('/graphql', graphqlHttp({
 
         type User {
             _id : ID!
-            name : String!
             email : String!
             password : String
         }
 
         input UserInput {
             email : String!,
-            password : String
+            password : String!
         }
 
         input EventInput {
@@ -92,14 +91,26 @@ app.use('/graphql', graphqlHttp({
                 title : args.eventInput.title,
                 description : args.eventInput.description,
                 price : +args.eventInput.price,
-                date : new Date(args.eventInput.date)
+                date : new Date(args.eventInput.date),
+                creator : "5cb250b655c21018be998359"
             });
             return event
-            event.save()
+            .save()
             .then( result =>{
+                return User.findById("5cb250b655c21018be998359")
                 console.log('hahah')
                 console.log(result);
                 return result
+            })
+            .then( user =>{
+                if(!user){
+                    throw new Error('User not found')
+                }
+                user.createdEvents.push(event);
+                return user.save();
+            })
+            .then( result =>{
+                return(result)
             })
             .catch(err => {
                 throw err;
