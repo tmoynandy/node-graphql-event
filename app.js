@@ -92,15 +92,17 @@ app.use('/graphql', graphqlHttp({
                 description : args.eventInput.description,
                 price : +args.eventInput.price,
                 date : new Date(args.eventInput.date),
-                creator : "5cb250b655c21018be998359"
+                creator : "5cb49ee2dfa42b2dd37ab6d0"
             });
+            let createdEvent;
             return event
             .save()
             .then( result =>{
-                return User.findById("5cb250b655c21018be998359")
+                createdEvent = result
+                return User.findById("5cb49ee2dfa42b2dd37ab6d0")
                 console.log('hahah')
                 console.log(result);
-                return result
+                
             })
             .then( user =>{
                 if(!user){
@@ -110,7 +112,7 @@ app.use('/graphql', graphqlHttp({
                 return user.save();
             })
             .then( result =>{
-                return(result)
+                return createdEvent
             })
             .catch(err => {
                 throw err;
