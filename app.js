@@ -53,6 +53,7 @@ app.use('/graphql', graphqlHttp({
 
         type RootQuery{
             events : [Event!]!
+            users : [User!]!
         }
 
         type RootMutation{
@@ -75,6 +76,14 @@ app.use('/graphql', graphqlHttp({
                 })
             }).catch(err =>{
                 throw err;
+            })
+        },
+        users : () =>{
+            return User.find()
+            .then(users =>{
+                return users.map(user =>{
+                    return user
+                })
             })
         },
         createEvent : (args) =>{
